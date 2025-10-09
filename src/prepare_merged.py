@@ -1,0 +1,107 @@
+"""
+Prepare merged multilabel dataset combining:
+- Text from hate_offensive_speech_detection.csv
+- Label structure from sample_submission.csv schema
+
+Maps 3-class labels to 7 multi-label categories using intelligent heuristics.
+"""
+import pandas as pd
+from preprocess import clean_text_advanced
+
+RAW_HATE_PATH = "data/raw/hate_offensive_speech_detection.csv"
+OUT_DIR = "data/processed"
+OUT_FILE = f"{OUT_DIR}/merged_multilabel.csv"
+
+# My reasoning for the label mapping:
+# Hate speech targets specific groups (severe) → maps to severe_toxic + identity_hate
+# Offensive language is typically profanity → maps to obscene
+# This is a heuristic approach - real annotations would significantly improve performance
+# Label mapping based on toxicity severity
+LABEL_MAPPING = {
+    1: {  # Hate speech
+        "toxic": 1,
+        "severe_toxic": 1,
+        "obscene": 0,
+        "threat": 0,
+        "insult": 1,
+        "identity_hate": 1,
+        "non_offensive": 0
+    },
+    2: {  # Offensive language
+        "toxic": 1,
+        "severe_toxic": 0,
+        "obscene": 1,
+        "threat": 0,
+        "insult": 1,
+        "identity_hate": 0,
+        "non_offensive": 0
+    },
+    3: {  # Neutral/Neither
+        "toxic": 0,
+        "severe_toxic": 0,
+        "obscene": 0,
+        "threat": 0,
+        "insult": 0,
+        "identity_hate": 0,
+        "non_offensive": 1
+    }
+}
+
+def run(lemmatize: bool = True):
+    """
+    Merge datasets and create multilabel structure.
+    
+    Args:
+        lemmatize: Apply lemmatization during text cleaning
+    """
+    print("="*80)
+    print("DATA PREPROCESSING - MERGING DATASETS")
+    print("="*80)
+    
+    # Load data
+    print(f"\nLoading {RAW_HATE_PATH}...")
+    df = pd.read_csv(RAW_HATE_PATH)
+    print(f"Loaded {len(df):,} samples")
+    
+    # Clean text
+    print(f"\nCleaning text (URLs, mentions, hashtags, emojis, punctuation, lemmatization={lemmatize})...")
+    df['text'] = df['tweet'].astype(str).apply(lambda x: clean_text_advanced(x, lemmatize=lemmatize))
+    
+    # Remove empty texts
+    original_len = len(df)
+    df = df[df['text'].str.strip() != '']
+    if len(df) < original_len:
+        print(f"Removed {original_len - len(df)} empty texts")
+    
+    # Map to multilabel structure
+    print(f"\nMapping 3-class labels to 7-class multi-label structure...")
+    
+    # Create label columns
+    for col in ["toxic", "severe_toxic", "obscene", "threat", "insult", "identity_hate", "non_offensive"]:
+        df[col] = df['label'].map(lambda x: LABEL_MAPPING[x][col])
+    
+    # Select final columns
+    output_columns = ["text", "toxic", "severe_toxic", "obscene", "threat", "insult", "identity_hate", "non_offensive"]
+    df_out = df[output_columns].copy()
+    
+    # Save
+    print(f"\nSaving to {OUT_FILE}...")
+    df_out.to_csv(OUT_FILE, index=False)
+    print(f"Shape: {df_out.shape}")
+    
+    # Statistics
+    print(f"\nLabel distribution:")
+    for col in ["toxic", "severe_toxic", "obscene", "threat", "insult", "identity_hate", "non_offensive"]:
+        positive = df_out[col].sum()
+        pct = 100 * positive / len(df_out)
+        print(f"  {col:20s}: {positive:5d} ({pct:5.1f}%)")
+    
+    print("\n" + "="*80)
+    print("Preprocessing completed")
+    print("="*80)
+    
+    return df_out
+
+if __name__ == "__main__":
+    run(lemmatize=True)
+
