@@ -12,3 +12,6 @@ api:
 
 demo:
 	streamlit run app/streamlit_app.py
+
+submit:
+	python src/infer_multilabel.py
