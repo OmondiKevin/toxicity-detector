@@ -15,7 +15,7 @@ from transformers import DistilBertTokenizer
 
 st.set_page_config(
     page_title="Toxicity Detector Pro",
-    page_icon="🔒",
+    page_icon=":shield:",
     layout="wide"
 )
 

@@ -68,11 +68,11 @@ Comprehensive evaluation including:
 
 | Metric | LSTM | BERT | Winner |
 |--------|------|------|--------|
-| **Macro F1-Score** | 0.3764 | 0.3592 | LSTM ✓ |
-| **Macro Precision** | 0.5245 | 0.6221 | BERT ✓ |
-| **Macro Recall** | 0.3671 | 0.3128 | LSTM ✓ |
-| **Macro ROC-AUC** | 0.8054 | 0.8492 | BERT ✓ |
-| **Micro F1-Score** | 0.6459 | 0.6385 | LSTM ✓ |
+| **Macro F1-Score** | 0.3764 | 0.3592 | LSTM |
+| **Macro Precision** | 0.5245 | 0.6221 | BERT |
+| **Macro Recall** | 0.3671 | 0.3128 | LSTM |
+| **Macro ROC-AUC** | 0.8054 | 0.8492 | BERT |
+| **Micro F1-Score** | 0.6459 | 0.6385 | LSTM |
 
 ### 3.2 Per-Label Performance (F1-Scores)
 
@@ -89,15 +89,15 @@ Comprehensive evaluation including:
 ### 3.3 Key Findings
 
 **Strengths:**
-- ✅ Strong ROC-AUC scores (>80%) indicate good ranking ability
-- ✅ Excellent performance on `non_offensive` class (F1 ≈ 0.80-0.84)
-- ✅ BERT achieves superior discriminative power (ROC-AUC 0.85)
-- ✅ LSTM shows better balance between precision and recall
+- Strong ROC-AUC scores (>80%) indicate good ranking ability
+- Excellent performance on `non_offensive` class (F1 ≈ 0.80-0.84)
+- BERT achieves superior discriminative power (ROC-AUC 0.85)
+- LSTM shows better balance between precision and recall
 
 **Weaknesses:**
-- ⚠️ Poor performance on rare classes (`severe_toxic`, `identity_hate`, `threat`)
-- ⚠️ Class imbalance challenges (only 427 samples for `severe_toxic`)
-- ⚠️ No ground truth for `threat` class in training data
+- Poor performance on rare classes (`severe_toxic`, `identity_hate`, `threat`)
+- Class imbalance challenges (only 427 samples for `severe_toxic`)
+- No ground truth for `threat` class in training data
 
 ---
 
@@ -270,11 +270,11 @@ Comprehensive evaluation including:
 
 Successfully delivered a complete toxicity detection system meeting all interview requirements:
 
-✅ **Task A:** Data preprocessing with intelligent label mapping  
-✅ **Task B:** Two deep learning architectures (LSTM & BERT)  
-✅ **Task C:** Comprehensive evaluation with metrics & visualizations  
-✅ **Task D:** Production-ready API with moderation recommendations  
-✅ **Deliverables:** Full documentation, code, models, and demo  
+**Task A:** Data preprocessing with intelligent label mapping  
+**Task B:** Two deep learning architectures (LSTM & BERT)  
+**Task C:** Comprehensive evaluation with metrics & visualizations  
+**Task D:** Production-ready API with moderation recommendations  
+**Deliverables:** Full documentation, code, models, and demo  
 
 **Key Achievement:** Despite data limitations (proxy labels), achieved **85% ROC-AUC** with actionable moderation system ready for deployment.
 
