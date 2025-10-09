@@ -1,6 +1,15 @@
 .venv/
 __pycache__/
 *.pyc
+.DS_Store
+*.swp
+*.swo
+
+# Model files (too large for git)
 models/
+*.pth
+*.joblib
+*.npy
+
+# Processed data (can be regenerated)
 data/processed/
-preds_sample_submission.csv

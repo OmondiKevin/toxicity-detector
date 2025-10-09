@@ -1,17 +1,20 @@
-prepare:
-	python src/prepare_multiclass.py
+prepare-merged:
+	python src/prepare_merged.py
 
-train-mc:
-	python src/train_multiclass_baseline.py
+split-multilabel:
+	python src/split_multilabel.py
 
-eval-mc:
-	python src/evaluate_multiclass.py
+train-lstm:
+	python src/train_lstm.py
+
+train-bert:
+	python src/train_bert.py
+
+eval-multilabel:
+	python src/evaluate_multilabel.py
 
 api:
 	uvicorn src.api:app --reload --port 8000
 
 demo:
-	streamlit run app/streamlit_app.py
-
-submit:
-	python src/infer_multilabel.py
+	streamlit run app/streamlit_app_multilabel.py
