@@ -208,3 +208,17 @@ uvicorn src.api:app --reload --port 8001
 
 **Out of memory during training?**
 Reduce batch size in `src/train_lstm.py` or `src/train_bert.py`.
+
+---
+
+## For Reviewers
+
+**See [REVIEWER_GUIDE.md](REVIEWER_GUIDE.md)** for the simplest way to unzip, set up, and run the project without retraining.
+
+The packaged `toxicity-detector.zip` includes:
+- Trained models (BERT + LSTM) - ready to use
+- All datasets (raw + processed)
+- Evaluation results and visualizations
+- Complete source code and documentation
+
+No training required - just unzip, install dependencies, and run!
