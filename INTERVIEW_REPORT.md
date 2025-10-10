@@ -51,6 +51,7 @@ Successfully implemented a complete multi-label toxicity detection system with t
 - **Parameters:** 66M+
 - **Training:** AdamW (lr=2e-5), differential learning rates for encoder/head, gradient clipping
 - **Best Val Loss:** 0.3716
+- **Training Time:** ~4-5 hours on CPU
 
 ### 2.3 Evaluation Metrics
 
@@ -131,7 +132,16 @@ Comprehensive evaluation including:
 - **Solution:** Patience=3 epochs, dropout=0.3, learning rate scheduling
 - **Result:** Successful generalization to test set
 
-### 4.3 Deployment Challenges
+### 4.3 Hardware Constraints
+
+**Challenge: CPU-Only Training on Apple Silicon**
+- **Hardware:** Apple MacBook Pro M1, 8GB RAM
+- **Issue:** No CUDA support on Apple Silicon → CPU-only training
+- **Impact:** BERT training took 4-5 hours (vs ~30-60 min on GPU)
+- **Solution:** Used DistilBERT (lighter than BERT-base), smaller batch sizes, efficient data loading
+- **Trade-off:** Longer iteration cycles but maintained model quality
+
+### 4.4 Deployment Challenges
 
 **Challenge: Real-time Inference Requirements**
 - **Issue:** BERT inference slow for production (>1s per request)
@@ -322,15 +332,25 @@ toxicity-detector/
 └── INTERVIEW_REPORT.md         # This report
 ```
 
+### Computational Environment
+
+- **Hardware:** Apple MacBook Pro with M1 Silicon Chip
+- **Memory:** 8GB RAM
+- **Compute:** CPU-only (no CUDA support on Apple Silicon)
+- **OS:** macOS
+- **Python:** 3.8+
+- **Key Libraries:** PyTorch (CPU), Transformers, NLTK, Scikit-learn
+
 ### Time Investment
 
 - Data Preprocessing: ~30 minutes
 - Model Development: ~2 hours
-- Training: ~1.5 hours
+- LSTM Training: ~45 minutes (CPU)
+- BERT Training: ~4-5 hours (CPU)
 - Evaluation: ~30 minutes
 - Deployment: ~45 minutes
 - Documentation: ~45 minutes
-- **Total: ~5.5 hours**
+- **Total: ~9-10 hours** (including extended CPU training time)
 
 ---
 
