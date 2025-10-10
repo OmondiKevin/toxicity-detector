@@ -10,6 +10,3 @@ models/
 *.pth
 *.joblib
 *.npy
-
-# Processed data (can be regenerated)
-data/processed/
