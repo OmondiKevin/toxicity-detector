@@ -2,21 +2,21 @@
 
 A complete toxicity detection system with multi-label deep learning models, comprehensive evaluation, and production-ready API deployment.
 
-## 🎯 Interview Tasks: 5/5 COMPLETED ✅
+## Interview Tasks: 5/5 Completed
 
 | Task | Status | Key Deliverables |
 |------|--------|------------------|
-| **A. Data Preprocessing** | ✅ COMPLETED | 20,996 samples, 7 labels, train/val/test splits |
-| **B. Model Building** | ✅ COMPLETED | LSTM (4.8M params) & BERT (66M+ params) |
-| **C. Model Evaluation** | ✅ COMPLETED | Metrics, confusion matrices, ROC curves |
-| **D. Deployment** | ✅ COMPLETED | FastAPI + Streamlit with moderation logic |
-| **E. Documentation** | ✅ COMPLETED | Technical report + comprehensive README |
+| **A. Data Preprocessing** | COMPLETED | 20,996 samples, 7 labels, train/val/test splits |
+| **B. Model Building** | COMPLETED | LSTM (4.8M params) & BERT (66M+ params) |
+| **C. Model Evaluation** | COMPLETED | Metrics, confusion matrices, ROC curves |
+| **D. Deployment** | COMPLETED | FastAPI + Streamlit with moderation logic |
+| **E. Documentation** | COMPLETED | Technical report + comprehensive README |
 
 **Performance Summary:**
-- 🏆 **BERT ROC-AUC:** 0.85 (best discriminative power)
-- 🏆 **LSTM F1-Score:** 0.65 (best balance)
-- 📊 **7-label multi-label classification** with automated moderation
-- 🚀 **Production-ready API** with real-time inference
+- **BERT ROC-AUC:** 0.85 (best discriminative power)
+- **LSTM F1-Score:** 0.65 (best balance)
+- **7-label multi-label classification** with automated moderation
+- **Production-ready API** with real-time inference
 
 ---
 
@@ -103,7 +103,7 @@ make demo  # Launch Streamlit demo
 
 ## Interview Task Implementation
 
-### Task A: Data Preprocessing ✅ COMPLETED
+### Task A: Data Preprocessing [COMPLETED]
 
 **Objective:** Merge datasets and prepare for multi-label classification
 
@@ -127,7 +127,7 @@ make prepare-merged
 
 **Note:** Since `sample_submission.csv` is a template without text data, we used intelligent heuristics to map the 3-class labels from hate_offensive dataset to the required 7-class multi-label structure.
 
-### Task B: Model Building ✅ COMPLETED
+### Task B: Model Building [COMPLETED]
 
 **Objective:** Build multi-label deep learning classifiers
 
@@ -148,7 +148,7 @@ make train-lstm  # Train LSTM model
 make train-bert  # Train BERT model
 ```
 
-### Task C: Model Evaluation ✅ COMPLETED
+### Task C: Model Evaluation [COMPLETED]
 
 **Objective:** Compare model performance with comprehensive metrics
 
@@ -188,7 +188,7 @@ make eval-multilabel  # Run comprehensive evaluation
 - `evaluation_results/bert_confusion_matrices.png` - Per-label confusion matrices
 - `evaluation_results/model_comparison.png` - Side-by-side comparison charts
 
-### Task D: Deployment ✅ COMPLETED
+### Task D: Deployment [COMPLETED]
 
 **Objective:** Design and implement API for real-time content moderation
 
@@ -230,21 +230,21 @@ make eval-multilabel  # Run comprehensive evaluation
 ```
 
 **Moderation Actions:**
-- **🚫 BLOCK**: Severe toxicity detected (>70% confidence)
-- **⚠️ FLAG**: Moderate toxicity detected (50-70% confidence) - requires manual review
-- **✅ ALLOW**: Content appears safe
+- **BLOCK**: Severe toxicity detected (>70% confidence)
+- **FLAG**: Moderate toxicity detected (50-70% confidence) - requires manual review
+- **ALLOW**: Content appears safe
 
 **Usage:**
 ```bash
-make api  # Start FastAPI server (port 8000)
-make demo-multilabel  # Launch enhanced Streamlit demo
+make api   # Start FastAPI server (port 8000)
+make demo  # Launch Streamlit demo
 ```
 
 **Demo Features:**
 - Real-time toxicity analysis
-- Visual probability meters per category
+- Visual probability breakdown per category
 - Automated moderation recommendations
-- Side-by-side model comparison
+- Side-by-side model comparison (LSTM vs BERT)
 - Interactive threshold adjustment
 
 ## License
