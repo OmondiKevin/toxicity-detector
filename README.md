@@ -30,10 +30,30 @@ cd toxicity-detector
 ```
 
 ### 2. Create and activate virtual environment
+
+**Create virtual environment (all OS):**
 ```bash
 python3 -m venv .venv
+```
+
+**Activate virtual environment:**
+
+macOS/Linux:
+```bash
 source .venv/bin/activate
 ```
+
+Windows (Command Prompt):
+```cmd
+.venv\Scripts\activate.bat
+```
+
+Windows (PowerShell):
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+**Note:** You should see `(.venv)` in your terminal prompt when activated.
 
 ### 3. Install dependencies
 ```bash
@@ -153,8 +173,20 @@ Trained model files are **not stored in Git** due to their size (100MB+). To use
 ## Troubleshooting
 
 **Virtual environment not active?**
+
+macOS/Linux:
 ```bash
 source .venv/bin/activate
+```
+
+Windows (Command Prompt):
+```cmd
+.venv\Scripts\activate.bat
+```
+
+Windows (PowerShell):
+```powershell
+.venv\Scripts\Activate.ps1
 ```
 
 **Missing NLTK data?**
