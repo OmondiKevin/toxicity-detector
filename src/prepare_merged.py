@@ -13,8 +13,8 @@ OUT_DIR = "data/processed"
 OUT_FILE = f"{OUT_DIR}/merged_multilabel.csv"
 
 # My reasoning for the label mapping:
-# Hate speech targets specific groups (severe) → maps to severe_toxic + identity_hate
-# Offensive language is typically profanity → maps to obscene
+# Hate speech targets specific groups (severe) - maps to severe_toxic + identity_hate
+# Offensive language is typically profanity - maps to obscene
 # This is a heuristic approach - real annotations would significantly improve performance
 # Label mapping based on toxicity severity
 LABEL_MAPPING = {
