@@ -251,3 +251,112 @@ make demo  # Launch Streamlit demo
 
 See LICENSE file for details.
 
+---
+
+## 🚀 Local Setup & Usage
+
+This project uses the datasets in `data/raw/` and `data/processed/` and ships with Makefile shortcuts so you can run everything with a few commands. **Model artifacts are not committed** (they are git-ignored), so you'll train models locally.
+
+### 1) Clone the repo
+```bash
+git clone https://github.com/OmondiKevin/toxicity-detector.git
+cd toxicity-detector
+```
+
+### 2) Create & activate a Python virtual environment
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+### 3) Install dependencies
+```bash
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+### 4) Download NLTK data (required for text preprocessing)
+```bash
+python -c "import nltk; nltk.download('wordnet'); nltk.download('omw-1.4')"
+```
+
+### 5) Verify the datasets
+The repository includes the raw and processed datasets:
+- `data/raw/hate_offensive_speech_detection.csv`
+- `data/raw/sample_submission.csv`
+- `data/processed/` (train/val/test splits - already included)
+
+### 6) Train the LSTM model
+> Model artifacts are not committed. This step will generate `models/lstm_multilabel.pth` locally.
+```bash
+make train-lstm
+# Training time: ~45 minutes on CPU (Apple M1)
+```
+
+### 7) Train the BERT model
+> This step will generate `models/bert_multilabel.pth` locally.
+```bash
+make train-bert
+# Training time: ~4-5 hours on CPU (Apple M1)
+```
+
+### 8) Evaluate both models
+```bash
+make eval-multilabel
+# Generates metrics, confusion matrices, and comparison charts
+# Outputs saved to: evaluation_results/
+```
+
+### 9) Run the API (FastAPI / Uvicorn)
+```bash
+make api
+# Server: http://127.0.0.1:8000
+# Health check:   curl -s http://127.0.0.1:8000/health
+# Sample request: curl -s -X POST http://127.0.0.1:8000/classify_multilabel_bert \
+#   -H 'Content-Type: application/json' \
+#   -d '{"text":"I hate you","threshold":0.5}'
+```
+
+### 10) Launch the Streamlit demo
+```bash
+make demo
+# Opens a local UI to test the multilabel models interactively
+```
+
+---
+
+## 🧰 Makefile Targets
+
+```makefile
+prepare-merged    # Merge raw datasets into multilabel format
+split-multilabel  # Create train/val/test splits
+train-lstm        # Train LSTM multilabel model (~45 min on M1 CPU)
+train-bert        # Train BERT multilabel model (~4-5 hours on M1 CPU)
+eval-multilabel   # Evaluate both models with comprehensive metrics
+api               # Start FastAPI server (Uvicorn)
+demo              # Launch Streamlit demo UI
+```
+
+## 🔒 Model Artifacts Policy
+
+- Trained models (e.g., `models/lstm_multilabel.pth`, `models/bert_multilabel.pth`) are **not** stored in Git.
+- Model files are git-ignored due to their large size (100MB+).
+- To obtain models locally, run `make train-lstm` and/or `make train-bert`.
+- Processed datasets (`data/processed/*.csv`) **ARE** included in the repository for convenience.
+
+## ⚙️ Hardware Requirements
+
+- **Minimum:** 8GB RAM, any CPU
+- **Recommended:** 16GB+ RAM for faster training
+- **GPU:** Optional (CUDA support will significantly speed up training)
+- **Note:** This project was developed on Apple MacBook Pro M1 (8GB RAM) with CPU-only training
+
+## ❓ Troubleshooting
+
+- **Virtualenv not active?** Ensure you see `(.venv)` in your prompt. Re-activate: `source .venv/bin/activate`
+- **Data not found?** The processed data is included in the repo. If missing, run: `make prepare-merged && make split-multilabel`
+- **API can't find model?** Train first: `make train-lstm` or `make train-bert`
+- **Port in use?** Stop other servers or run: `uvicorn src.api:app --reload --port 8001`
+- **NLTK WordNet error?** Run: `python -c "import nltk; nltk.download('wordnet'); nltk.download('omw-1.4')"`
+- **Out of memory during training?** Reduce batch size in `src/train_lstm.py` or `src/train_bert.py`
+
