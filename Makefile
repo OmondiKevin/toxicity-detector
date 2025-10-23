@@ -1,3 +1,24 @@
+.PHONY: help prepare-merged split-multilabel train-lstm train-bert eval-multilabel api demo
+
+help: ## Show this help message
+	@echo "Toxicity Detector - Available Commands:"
+	@echo ""
+	@echo "Data Preparation:"
+	@echo "  prepare-merged     Prepare merged dataset from raw data"
+	@echo "  split-multilabel   Split dataset into train/validation/test sets"
+	@echo ""
+	@echo "Model Training:"
+	@echo "  train-lstm         Train LSTM model for multilabel classification"
+	@echo "  train-bert         Train BERT model for multilabel classification"
+	@echo ""
+	@echo "Evaluation & Deployment:"
+	@echo "  eval-multilabel    Evaluate trained models and generate metrics"
+	@echo "  api                Start FastAPI server for model inference"
+	@echo "  demo               Launch Streamlit demo application"
+	@echo ""
+	@echo "Usage: make <target>"
+	@echo "Example: make train-bert"
+
 prepare-merged:
 	python src/prepare_merged.py
 
