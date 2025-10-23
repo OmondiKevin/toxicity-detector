@@ -5,12 +5,10 @@ Handles cleaning, normalization, and optional lemmatization.
 import re
 import html
 import emoji
-from typing import Optional
 
 try:
     import nltk
     from nltk.stem import WordNetLemmatizer
-    from nltk.corpus import wordnet
     try:
         nltk.data.find('corpora/wordnet')
     except LookupError:

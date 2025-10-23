@@ -4,7 +4,7 @@ Fine-tunes DistilBERT for efficiency while maintaining performance.
 """
 import torch
 import torch.nn as nn
-from transformers import DistilBertModel, DistilBertConfig
+from transformers import DistilBertModel
 
 class BERTMultilabelClassifier(nn.Module):
     """

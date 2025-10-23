@@ -3,7 +3,6 @@ Comprehensive Application Testing Script.
 Tests all components: data, models, API logic, and predictions.
 """
 import sys
-import os
 sys.path.insert(0, 'src')
 
 import torch
