@@ -19,3 +19,7 @@ models/
 build/
 dist/
 *.egg
+
+# Release and large artifacts
+/evaluation_results/
+/data/raw/**
