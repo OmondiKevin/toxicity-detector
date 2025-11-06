@@ -13,3 +13,9 @@ models/
 
 # Large zip files
 *.zip
+
+# Build artifacts
+*.egg-info/
+build/
+dist/
+*.egg
