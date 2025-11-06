@@ -6,7 +6,7 @@ Prepare merged multilabel dataset combining:
 Maps 3-class labels to 7 multi-label categories using intelligent heuristics.
 """
 import pandas as pd
-from preprocess import clean_text_advanced
+from src.preprocess import clean_text_advanced
 
 RAW_HATE_PATH = "data/raw/hate_offensive_speech_detection.csv"
 OUT_DIR = "data/processed"

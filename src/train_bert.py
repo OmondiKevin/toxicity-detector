@@ -12,8 +12,8 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 import numpy as np
 from tqdm import tqdm
 
-from model_bert import BERTMultilabelClassifier
-from dataset_utils import create_bert_dataloaders
+from src.model_bert import BERTMultilabelClassifier
+from src.dataset_utils import create_bert_dataloaders
 
 # Paths
 TRAIN_PATH = "data/processed/train_multilabel.csv"

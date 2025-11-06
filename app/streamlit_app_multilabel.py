@@ -5,12 +5,9 @@ Supports LSTM and BERT models with content moderation actions.
 import streamlit as st
 import torch
 import json
-import sys
-sys.path.insert(0, 'src')
-
-from model_lstm import LSTMMultilabelClassifier
-from model_bert import BERTMultilabelClassifier
-from preprocess import clean_text_advanced
+from src.model_lstm import LSTMMultilabelClassifier
+from src.model_bert import BERTMultilabelClassifier
+from src.preprocess import clean_text_advanced
 from transformers import DistilBertTokenizer
 
 st.set_page_config(

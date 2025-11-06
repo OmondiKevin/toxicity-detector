@@ -2,9 +2,6 @@
 Comprehensive Application Testing Script.
 Tests all components: data, models, API logic, and predictions.
 """
-import sys
-sys.path.insert(0, 'src')
-
 import torch
 import json
 import numpy as np
