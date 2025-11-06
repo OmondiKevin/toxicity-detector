@@ -11,8 +11,8 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 import numpy as np
 from tqdm import tqdm
 
-from model_lstm import LSTMMultilabelClassifier
-from dataset_utils import create_lstm_dataloaders
+from src.model_lstm import LSTMMultilabelClassifier
+from src.dataset_utils import create_lstm_dataloaders
 
 # Paths
 TRAIN_PATH = "data/processed/train_multilabel.csv"

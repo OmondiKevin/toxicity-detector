@@ -16,9 +16,9 @@ from sklearn.metrics import (
     multilabel_confusion_matrix
 )
 
-from model_lstm import LSTMMultilabelClassifier
-from model_bert import BERTMultilabelClassifier
-from dataset_utils import create_lstm_dataloaders, create_bert_dataloaders
+from src.model_lstm import LSTMMultilabelClassifier
+from src.model_bert import BERTMultilabelClassifier
+from src.dataset_utils import create_lstm_dataloaders, create_bert_dataloaders
 
 # Paths
 TEST_PATH = "data/processed/test_multilabel.csv"
