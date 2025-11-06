@@ -67,6 +67,8 @@ The following files should be present (already included in the zip):
 
 ## Running the Project
 
+**Tip:** Run `make help` to see all available Makefile commands.
+
 ### Option A: FastAPI Server
 
 Start the API server:
@@ -200,7 +202,7 @@ The BERT model requires ~2GB RAM for inference. Use LSTM endpoint if memory cons
   - Challenges faced
   - Production recommendations
 - **requirements.txt** - All dependencies with pinned versions
-- **Makefile** - Automation targets
+- **Makefile** - Automation targets (run `make help` to see all commands)
 
 ## Notes
 
@@ -227,6 +229,9 @@ The BERT model requires ~2GB RAM for inference. Use LSTM endpoint if memory cons
 If you want to retrain models from scratch (not necessary):
 
 ```bash
+# View all available commands
+make help
+
 # Regenerate data splits (if needed)
 make prepare-merged
 make split-multilabel

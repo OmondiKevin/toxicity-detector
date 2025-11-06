@@ -117,8 +117,14 @@ Interactive web interface for testing the models.
 
 ## Makefile Targets
 
+View all available commands:
+```bash
+make help
+```
+
 | Target | Description |
 |--------|-------------|
+| `help` | Show all available Makefile commands |
 | `prepare-merged` | Merge raw datasets into multilabel format |
 | `split-multilabel` | Create train/val/test splits |
 | `train-lstm` | Train LSTM model |
