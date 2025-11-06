@@ -56,10 +56,20 @@ Windows (PowerShell):
 **Note:** You should see `(.venv)` in your terminal prompt when activated.
 
 ### 3. Install dependencies
+
+**Option A: Install as package (recommended)**
+```bash
+pip install --upgrade pip
+pip install -e .
+```
+
+**Option B: Install from requirements.txt**
 ```bash
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
+
+**Note:** This project uses modern Python packaging with `pyproject.toml` (PEP 517/518/621). Installing as a package enables the `toxicity-detector-api` console command.
 
 ### 4. Download NLTK data
 ```bash
@@ -132,6 +142,9 @@ make help
 | `eval-multilabel` | Evaluate both models with metrics |
 | `api` | Start FastAPI server |
 | `demo` | Launch Streamlit UI |
+| `install` | Install package in editable mode |
+| `test` | Run pytest tests |
+| `lint` | Run flake8 linting |
 
 ## API Endpoints
 
@@ -158,8 +171,9 @@ toxicity-detector/
 │   └── preprocess.py           # Text cleaning utilities
 ├── app/
 │   └── streamlit_app_multilabel.py  # Streamlit demo
+├── pyproject.toml              # Modern Python packaging config
 ├── Makefile                    # Build automation
-└── requirements.txt
+└── requirements.txt            # Dependencies (for pip install -r)
 ```
 
 ## Model Artifacts
