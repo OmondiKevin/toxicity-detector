@@ -1,4 +1,4 @@
-.PHONY: help prepare-merged split-multilabel train-lstm train-bert eval-multilabel api demo
+.PHONY: help prepare-merged split-multilabel train-lstm train-bert eval-multilabel api demo test test-cov lint install
 
 help: ## Show this help message
 	@echo "Toxicity Detector - Available Commands:"
@@ -15,6 +15,14 @@ help: ## Show this help message
 	@echo "  eval-multilabel    Evaluate trained models and generate metrics"
 	@echo "  api                Start FastAPI server for model inference"
 	@echo "  demo               Launch Streamlit demo application"
+	@echo ""
+	@echo "Testing & Quality:"
+	@echo "  test               Run pytest tests"
+	@echo "  test-cov           Run pytest tests with coverage report"
+	@echo "  lint               Run flake8 linting"
+	@echo ""
+	@echo "Setup:"
+	@echo "  install            Install package in editable mode"
 	@echo ""
 	@echo "Usage: make <target>"
 	@echo "Example: make train-bert"
@@ -39,3 +47,16 @@ api:
 
 demo:
 	streamlit run app/streamlit_app_multilabel.py
+
+test: ## Run pytest tests
+	pytest tests/ -v
+
+test-cov: ## Run pytest tests with coverage report
+	pytest tests/ -v --cov=src --cov=app --cov-report=html --cov-report=term
+
+lint: ## Run flake8 linting
+	flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+	flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+install: ## Install package in editable mode
+	pip install -e .

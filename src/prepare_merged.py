@@ -51,58 +51,58 @@ LABEL_MAPPING = {
 def run(lemmatize: bool = True):
     """
     Merge datasets and create multilabel structure.
-    
+
     Args:
         lemmatize: Apply lemmatization during text cleaning
     """
-    print("="*80)
+    print("=" * 80)
     print("DATA PREPROCESSING - MERGING DATASETS")
-    print("="*80)
-    
+    print("=" * 80)
+
     # Load data
     print(f"\nLoading {RAW_HATE_PATH}...")
     df = pd.read_csv(RAW_HATE_PATH)
     print(f"Loaded {len(df):,} samples")
-    
+
     # Clean text
     print(f"\nCleaning text (URLs, mentions, hashtags, emojis, punctuation, lemmatization={lemmatize})...")
     df['text'] = df['tweet'].astype(str).apply(lambda x: clean_text_advanced(x, lemmatize=lemmatize))
-    
+
     # Remove empty texts
     original_len = len(df)
     df = df[df['text'].str.strip() != '']
     if len(df) < original_len:
         print(f"Removed {original_len - len(df)} empty texts")
-    
+
     # Map to multilabel structure
-    print(f"\nMapping 3-class labels to 7-class multi-label structure...")
-    
+    print("\nMapping 3-class labels to 7-class multi-label structure...")
+
     # Create label columns
     for col in ["toxic", "severe_toxic", "obscene", "threat", "insult", "identity_hate", "non_offensive"]:
         df[col] = df['label'].map(lambda x: LABEL_MAPPING[x][col])
-    
+
     # Select final columns
     output_columns = ["text", "toxic", "severe_toxic", "obscene", "threat", "insult", "identity_hate", "non_offensive"]
     df_out = df[output_columns].copy()
-    
+
     # Save
     print(f"\nSaving to {OUT_FILE}...")
     df_out.to_csv(OUT_FILE, index=False)
     print(f"Shape: {df_out.shape}")
-    
+
     # Statistics
-    print(f"\nLabel distribution:")
+    print("\nLabel distribution:")
     for col in ["toxic", "severe_toxic", "obscene", "threat", "insult", "identity_hate", "non_offensive"]:
         positive = df_out[col].sum()
         pct = 100 * positive / len(df_out)
         print(f"  {col:20s}: {positive:5d} ({pct:5.1f}%)")
-    
-    print("\n" + "="*80)
+
+    print("\n" + "=" * 80)
     print("Preprocessing completed")
-    print("="*80)
-    
+    print("=" * 80)
+
     return df_out
+
 
 if __name__ == "__main__":
     run(lemmatize=True)
-
