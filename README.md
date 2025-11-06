@@ -21,6 +21,12 @@ This system classifies text into the following categories:
 - LSTM: 80.5% ROC-AUC, 0.65 F1-Score
 - BERT: 84.9% ROC-AUC, 0.64 F1-Score
 
+## Requirements
+
+- **Python 3.11+** (required)
+- pip, setuptools, wheel
+- 8GB+ RAM recommended for training
+
 ## Local Setup
 
 ### 1. Clone the repository
@@ -33,7 +39,12 @@ cd toxicity-detector
 
 **Create virtual environment (all OS):**
 ```bash
-python3 -m venv .venv
+python3.11 -m venv .venv
+```
+
+**Note:** Ensure you have Python 3.11 or later installed. Check your version:
+```bash
+python3 --version
 ```
 
 **Activate virtual environment:**
@@ -59,17 +70,22 @@ Windows (PowerShell):
 
 **Option A: Install as package (recommended)**
 ```bash
-pip install --upgrade pip
+pip install --upgrade pip setuptools wheel
 pip install -e .
 ```
 
 **Option B: Install from requirements.txt**
 ```bash
-pip install --upgrade pip
+pip install --upgrade pip setuptools wheel
 pip install -r requirements.txt
 ```
 
-**Note:** This project uses modern Python packaging with `pyproject.toml` (PEP 517/518/621). Installing as a package enables the `toxicity-detector-api` console command.
+**For development/testing:**
+```bash
+pip install -e .[test]
+```
+
+**Note:** This project uses modern Python packaging with `pyproject.toml` (PEP 517/518/621). Installing as a package enables the `toxicity-detector-api` console command. The `[test]` extra includes pytest, httpx (required for FastAPI TestClient), and flake8.
 
 ### 4. Download NLTK data
 ```bash
@@ -144,6 +160,7 @@ make help
 | `demo` | Launch Streamlit UI |
 | `install` | Install package in editable mode |
 | `test` | Run pytest tests |
+| `test-cov` | Run pytest tests with coverage report |
 | `lint` | Run flake8 linting |
 
 ## API Endpoints
@@ -191,6 +208,13 @@ Trained model files are **not stored in Git** due to their size (100MB+). To use
 - Developed on: Apple MacBook Pro M1, 8GB RAM, CPU-only
 
 ## Troubleshooting
+
+**Python version error?**
+This project requires Python 3.11 or later. If you see an error about Python version:
+```bash
+python3 --version  # Should show 3.11.x or higher
+```
+If you have an older version, install Python 3.11+ from [python.org](https://www.python.org/downloads/) or use a version manager like `pyenv`.
 
 **Virtual environment not active?**
 
