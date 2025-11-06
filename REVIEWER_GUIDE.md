@@ -31,10 +31,20 @@ python -m venv .venv
 ```
 
 ### 3. Install Dependencies
+
+**Option A: Install as package (recommended)**
+```bash
+pip install --upgrade pip
+pip install -e .
+```
+
+**Option B: Install from requirements.txt**
 ```bash
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
+
+**Note:** This project uses modern Python packaging with `pyproject.toml`. Installing as a package enables the `toxicity-detector-api` console command.
 
 ### 4. Download NLTK Data
 ```bash
@@ -195,13 +205,14 @@ The BERT model requires ~2GB RAM for inference. Use LSTM endpoint if memory cons
 ## Documentation
 
 - **README.md** - Complete setup and usage guide
-- **INTERVIEW_REPORT.md** - Comprehensive technical report (11KB, 359 lines)
+- **INTERVIEW_REPORT.md** - Comprehensive technical report
   - Approach and methodology
   - Model architectures
   - Performance analysis
   - Challenges faced
   - Production recommendations
-- **requirements.txt** - All dependencies with pinned versions
+- **pyproject.toml** - Modern Python packaging configuration (PEP 517/518/621)
+- **requirements.txt** - Dependencies with pinned versions (for pip install -r)
 - **Makefile** - Automation targets (run `make help` to see all commands)
 
 ## Notes
@@ -211,6 +222,7 @@ The BERT model requires ~2GB RAM for inference. Use LSTM endpoint if memory cons
 - **Reproducible** - All dependencies pinned to specific versions
 - **Cross-platform** - Works on macOS, Linux, and Windows
 - **Production-ready** - FastAPI + Streamlit deployment included
+- **Modern packaging** - Uses `pyproject.toml` following Python packaging standards
 
 ## Performance Benchmarks
 
