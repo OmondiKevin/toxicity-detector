@@ -28,6 +28,7 @@ MENTION = re.compile(r"@[A-Za-z0-9_]+")
 HASHTAG = re.compile(r"#[A-Za-z0-9_]+")
 PUNCT = re.compile(r"[^\w\s]")
 
+
 def clean_text(t: str) -> str:
     """
     Basic text cleaning (backward compatible).
@@ -42,20 +43,21 @@ def clean_text(t: str) -> str:
     t = re.sub(r"\s+", " ", t).strip().lower()
     return t
 
+
 def clean_text_advanced(t: str, lemmatize: bool = False) -> str:
     """
     Advanced text cleaning with optional lemmatization.
-    
+
     Args:
         t: Input text
         lemmatize: If True, apply lemmatization (requires nltk)
-    
+
     Returns:
         Cleaned text
     """
     # Apply basic cleaning
     t = clean_text(t)
-    
+
     # Apply lemmatization if requested
     if lemmatize and NLTK_AVAILABLE and LEMMATIZER:
         words = t.split()
@@ -64,6 +66,5 @@ def clean_text_advanced(t: str, lemmatize: bool = False) -> str:
         t = ' '.join(words)
     elif lemmatize and not NLTK_AVAILABLE:
         print("Warning: NLTK not available, skipping lemmatization")
-    
-    return t
 
+    return t

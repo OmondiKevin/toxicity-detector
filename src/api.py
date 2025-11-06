@@ -26,12 +26,12 @@ def load_lstm_model():
     global LSTM_MODEL, LSTM_VOCAB
     if LSTM_MODEL is None:
         from src.model_lstm import LSTMMultilabelClassifier
-        
+
         # Load config and vocab
         with open("models/lstm_config.json", 'r') as f:
             config = json.load(f)
         LSTM_VOCAB = torch.load("models/lstm_vocab.pth", weights_only=False)
-        
+
         # Load model
         LSTM_MODEL = LSTMMultilabelClassifier(
             vocab_size=len(LSTM_VOCAB),
@@ -41,11 +41,11 @@ def load_lstm_model():
             dropout=config['dropout'],
             num_labels=7
         ).to(DEVICE)
-        
+
         checkpoint = torch.load("models/lstm_multilabel.pth", map_location=DEVICE, weights_only=False)
         LSTM_MODEL.load_state_dict(checkpoint['model_state_dict'])
         LSTM_MODEL.eval()
-    
+
     return LSTM_MODEL, LSTM_VOCAB
 
 
@@ -55,11 +55,11 @@ def load_bert_model():
     if BERT_MODEL is None:
         from src.model_bert import BERTMultilabelClassifier
         from transformers import DistilBertTokenizer
-        
+
         # Load config
         with open("models/bert_config.json", 'r') as f:
             config = json.load(f)
-        
+
         # Load tokenizer and model
         BERT_TOKENIZER = DistilBertTokenizer.from_pretrained(config['model_name'])
         BERT_MODEL = BERTMultilabelClassifier(
@@ -67,44 +67,44 @@ def load_bert_model():
             dropout=config['dropout'],
             pretrained_model=config['model_name']
         ).to(DEVICE)
-        
+
         checkpoint = torch.load("models/bert_multilabel.pth", map_location=DEVICE, weights_only=False)
         BERT_MODEL.load_state_dict(checkpoint['model_state_dict'])
         BERT_MODEL.eval()
-    
+
     return BERT_MODEL, BERT_TOKENIZER
 
 
 def get_moderation_action(probabilities: Dict[str, float], threshold_high=0.7, threshold_medium=0.5):
     """
     Determine moderation action based on toxicity probabilities.
-    
+
     Returns:
         action: "block", "flag", or "allow"
         reason: explanation for the action
     """
     # Exclude non_offensive from toxicity checks
     toxic_labels = {k: v for k, v in probabilities.items() if k != "non_offensive"}
-    
+
     max_toxic = max(toxic_labels.values()) if toxic_labels else 0
     max_label = max(toxic_labels, key=toxic_labels.get) if toxic_labels else None
-    
+
     # Check for severe toxicity
     if probabilities.get("severe_toxic", 0) > threshold_high or probabilities.get("threat", 0) > threshold_high:
         return "block", "Severe toxicity or threats detected"
-    
+
     # Check for high toxicity
     if max_toxic > threshold_high:
         return "block", f"High {max_label} content detected"
-    
+
     # Check for medium toxicity
     if max_toxic > threshold_medium:
         return "flag", f"Moderate {max_label} content detected - requires review"
-    
+
     # Check if clearly non-offensive
     if probabilities.get("non_offensive", 0) > 0.7:
         return "allow", "Content appears safe"
-    
+
     # Default for uncertain cases
     return "flag", "Uncertain classification - manual review recommended"
 
@@ -140,28 +140,28 @@ def classify_multilabel_lstm(inp: MLIn) -> MLOut:
     Returns probabilities for 7 toxicity categories and moderation action.
     """
     from src.preprocess import clean_text_advanced
-    
+
     # Load model
     model, vocab = load_lstm_model()
-    
+
     # Preprocess text
     cleaned_text = clean_text_advanced(inp.text, lemmatize=True)
-    
+
     # Encode
     input_ids = vocab.encode(cleaned_text, max_length=128)
     input_tensor = torch.tensor([input_ids], dtype=torch.long).to(DEVICE)
-    
+
     # Predict
     with torch.no_grad():
         probs = model(input_tensor).cpu().numpy()[0]
-    
+
     # Format results
     probabilities = {label: float(prob) for label, prob in zip(LABEL_NAMES, probs)}
     predictions = {label: bool(prob > inp.threshold) for label, prob in zip(LABEL_NAMES, probs)}
-    
+
     # Get moderation action
     action, reason = get_moderation_action(probabilities)
-    
+
     return MLOut(
         text=inp.text,
         probabilities=probabilities,
@@ -180,7 +180,7 @@ def classify_multilabel_bert(inp: MLIn) -> MLOut:
     """
     # Load model
     model, tokenizer = load_bert_model()
-    
+
     # Tokenize
     encoding = tokenizer(
         inp.text,
@@ -190,21 +190,21 @@ def classify_multilabel_bert(inp: MLIn) -> MLOut:
         truncation=True,
         return_tensors='pt'
     )
-    
+
     input_ids = encoding['input_ids'].to(DEVICE)
     attention_mask = encoding['attention_mask'].to(DEVICE)
-    
+
     # Predict
     with torch.no_grad():
         probs = model(input_ids, attention_mask).cpu().numpy()[0]
-    
+
     # Format results
     probabilities = {label: float(prob) for label, prob in zip(LABEL_NAMES, probs)}
     predictions = {label: bool(prob > inp.threshold) for label, prob in zip(LABEL_NAMES, probs)}
-    
+
     # Get moderation action
     action, reason = get_moderation_action(probabilities)
-    
+
     return MLOut(
         text=inp.text,
         probabilities=probabilities,

@@ -1,4 +1,3 @@
 """
 Toxicity Detector - Application Package
 """
-
