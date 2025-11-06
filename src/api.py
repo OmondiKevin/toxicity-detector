@@ -4,8 +4,7 @@ Provides endpoints for LSTM and BERT model inference with content moderation.
 """
 from fastapi import FastAPI
 from pydantic import BaseModel
-from typing import List, Dict, Any, Optional
-import os
+from typing import Dict, Any, Optional
 import torch
 import json
 

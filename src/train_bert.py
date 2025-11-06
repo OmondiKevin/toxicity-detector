@@ -2,14 +2,15 @@
 Train BERT multi-label classifier.
 Uses DistilBERT for efficiency.
 """
+import os
+import json
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 import numpy as np
 from tqdm import tqdm
-import os
-import json
 
 from model_bert import BERTMultilabelClassifier
 from dataset_utils import create_bert_dataloaders
@@ -104,7 +105,7 @@ def run_training():
     os.makedirs(MODEL_DIR, exist_ok=True)
     
     print("\nLoading data...")
-    train_loader, val_loader, test_loader, tokenizer = create_bert_dataloaders(
+    train_loader, val_loader, test_loader, _ = create_bert_dataloaders(
         TRAIN_PATH,
         VAL_PATH,
         TEST_PATH,
@@ -147,7 +148,7 @@ def run_training():
         train_loss = train_epoch(model, train_loader, criterion, optimizer, device)
         
         # Validate
-        val_loss, val_preds, val_labels = evaluate(model, val_loader, criterion, device)
+        val_loss, _, _ = evaluate(model, val_loader, criterion, device)
         
         # Learning rate scheduling
         scheduler.step(val_loss)

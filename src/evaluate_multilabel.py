@@ -2,6 +2,9 @@
 Evaluate multilabel classification models.
 Computes metrics and generates visualizations for LSTM and BERT models.
 """
+import os
+import json
+
 import torch
 import numpy as np
 import pandas as pd
@@ -10,12 +13,8 @@ import seaborn as sns
 from sklearn.metrics import (
     precision_recall_fscore_support,
     roc_auc_score,
-    confusion_matrix,
-    multilabel_confusion_matrix,
-    classification_report
+    multilabel_confusion_matrix
 )
-import os
-import json
 
 from model_lstm import LSTMMultilabelClassifier
 from model_bert import BERTMultilabelClassifier
@@ -95,7 +94,7 @@ def compute_metrics(y_true, y_pred, y_probs):
             else:
                 roc_auc_per_class.append(np.nan)
         roc_auc_macro = np.nanmean(roc_auc_per_class)
-    except:
+    except (ValueError, IndexError) as e:
         roc_auc_per_class = [np.nan] * y_true.shape[1]
         roc_auc_macro = np.nan
     

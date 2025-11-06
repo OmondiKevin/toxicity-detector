@@ -3,7 +3,6 @@ Split merged multilabel dataset into train/val/test sets.
 Uses stratified split based on label combinations for better distribution.
 """
 import pandas as pd
-import numpy as np
 from sklearn.model_selection import train_test_split
 
 INPUT_FILE = "data/processed/merged_multilabel.csv"
@@ -11,6 +10,7 @@ OUT_DIR = "data/processed"
 RANDOM_SEED = 42
 
 LABEL_COLS = ["toxic", "severe_toxic", "obscene", "threat", "insult", "identity_hate", "non_offensive"]
+
 
 def create_stratify_column(df, label_cols):
     """

@@ -47,6 +47,7 @@ LABEL_MAPPING = {
     }
 }
 
+
 def run(lemmatize: bool = True):
     """
     Merge datasets and create multilabel structure.

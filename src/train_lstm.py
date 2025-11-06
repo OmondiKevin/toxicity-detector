@@ -1,14 +1,15 @@
 """
 Train LSTM multi-label classifier.
 """
+import os
+import json
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 import numpy as np
 from tqdm import tqdm
-import os
-import json
 
 from model_lstm import LSTMMultilabelClassifier
 from dataset_utils import create_lstm_dataloaders
@@ -140,7 +141,7 @@ def run_training():
         train_loss = train_epoch(model, train_loader, criterion, optimizer, device)
         
         # Validate
-        val_loss, val_preds, val_labels = evaluate(model, val_loader, criterion, device)
+        val_loss, _, _ = evaluate(model, val_loader, criterion, device)
         
         # Learning rate scheduling
         scheduler.step(val_loss)

@@ -10,3 +10,6 @@ models/
 *.pth
 *.joblib
 *.npy
+
+# Large zip files
+*.zip

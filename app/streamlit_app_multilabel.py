@@ -89,7 +89,7 @@ def get_moderation_action(probs_dict, threshold_high=0.7, threshold_medium=0.5):
     return "FLAG", "Uncertain - manual review recommended", "warning"
 
 
-def predict_lstm(text, model, vocab, threshold=0.5):
+def predict_lstm(text, model, vocab):
     """Predict with LSTM model"""
     cleaned = clean_text_advanced(text, lemmatize=True)
     input_ids = vocab.encode(cleaned, max_length=128)
@@ -101,7 +101,7 @@ def predict_lstm(text, model, vocab, threshold=0.5):
     return {label: float(prob) for label, prob in zip(LABEL_NAMES, probs)}
 
 
-def predict_bert(text, model, tokenizer, threshold=0.5):
+def predict_bert(text, model, tokenizer):
     """Predict with BERT model"""
     encoding = tokenizer(
         text,
@@ -148,7 +148,7 @@ with tab1:
         if st.button("Analyze with LSTM", key="lstm_btn"):
             if text_lstm.strip():
                 with st.spinner("Analyzing..."):
-                    probs = predict_lstm(text_lstm, lstm_model, lstm_vocab, threshold_lstm)
+                    probs = predict_lstm(text_lstm, lstm_model, lstm_vocab)
                     action, reason, action_type = get_moderation_action(probs)
                     
                     # Show action
@@ -165,7 +165,6 @@ with tab1:
                     for idx, (label, prob) in enumerate(probs.items()):
                         col = cols[idx % 4]
                         is_detected = prob > threshold_lstm
-                        color = "red" if is_detected and label != "non_offensive" else "green" if label == "non_offensive" and is_detected else "gray"
                         col.metric(
                             label.replace("_", " ").title(),
                             f"{prob:.1%}",
@@ -204,7 +203,7 @@ with tab2:
         if st.button("Analyze with BERT", key="bert_btn"):
             if text_bert.strip():
                 with st.spinner("Analyzing..."):
-                    probs = predict_bert(text_bert, bert_model, bert_tokenizer, threshold_bert)
+                    probs = predict_bert(text_bert, bert_model, bert_tokenizer)
                     action, reason, action_type = get_moderation_action(probs)
                     
                     # Show action
@@ -221,7 +220,6 @@ with tab2:
                     for idx, (label, prob) in enumerate(probs.items()):
                         col = cols[idx % 4]
                         is_detected = prob > threshold_bert
-                        color = "red" if is_detected and label != "non_offensive" else "green" if label == "non_offensive" and is_detected else "gray"
                         col.metric(
                             label.replace("_", " ").title(),
                             f"{prob:.1%}",
