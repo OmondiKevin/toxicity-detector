@@ -1,4 +1,4 @@
-.PHONY: help prepare-merged split-multilabel train-lstm train-bert eval-multilabel api demo test test-cov lint install
+.PHONY: help prepare-merged split-multilabel train-lstm train-bert eval-multilabel api demo test test-cov lint install package-release package-assets update-release
 
 help: ## Show this help message
 	@echo "Toxicity Detector - Available Commands:"
@@ -24,23 +24,28 @@ help: ## Show this help message
 	@echo "Setup:"
 	@echo "  install            Install package in editable mode"
 	@echo ""
+	@echo "Release Management:"
+	@echo "  package-release    Create single-ZIP release package (toxicity-detector-v<version>.zip)"
+	@echo "  package-assets     [Legacy] Create zip archive of models and processed data only"
+	@echo "  update-release     [Legacy] Update existing GitHub release with new assets"
+	@echo ""
 	@echo "Usage: make <target>"
 	@echo "Example: make train-bert"
 
 prepare-merged:
-	python src/prepare_merged.py
+	python3 src/prepare_merged.py
 
 split-multilabel:
-	python src/split_multilabel.py
+	python3 src/split_multilabel.py
 
 train-lstm:
-	python src/train_lstm.py
+	python3 src/train_lstm.py
 
 train-bert:
-	python src/train_bert.py
+	python3 src/train_bert.py
 
 eval-multilabel:
-	python src/evaluate_multilabel.py
+	python3 src/evaluate_multilabel.py
 
 api:
 	uvicorn src.api:app --reload --port 8000
@@ -60,3 +65,29 @@ lint: ## Run flake8 linting
 
 install: ## Install package in editable mode
 	pip install -e .
+
+# Release Management
+package-release: ## Create single-ZIP release package (requires VERSION variable)
+	@if [ -z "$(VERSION)" ]; then \
+		echo "Error: VERSION is required. Usage: make package-release VERSION=1.0.1"; \
+		exit 1; \
+	fi
+	python3 tools/pack_release.py --version $(VERSION)
+	@echo "Release package created: dist/toxicity-detector-v$(VERSION).zip"
+
+# Legacy release management (kept for backward compatibility)
+ASSET_ZIP := toxicity-detector-assets-$(shell date +%Y%m%d).zip
+
+package-assets: ## [Legacy] Create zip archive of models and processed data only
+	@rm -f $(ASSET_ZIP)
+	@zip -r $(ASSET_ZIP) \
+		models/*.pth models/*config.json models/*_test_preds.npy models/*_test_labels.npy \
+		data/processed/train_multilabel.csv data/processed/val_multilabel.csv data/processed/test_multilabel.csv
+	@echo "Created $(ASSET_ZIP)"
+
+update-release: ## [Legacy] Update existing GitHub release with new assets
+	@if [ -z "$(TAG)" ]; then \
+		echo "Error: TAG is required. Usage: make update-release TAG=v1.0.0 FILES='...' BODY='...'"; \
+		exit 1; \
+	fi
+	@bash scripts/release_update.sh $(TAG) "$(FILES)" "$(BODY)"

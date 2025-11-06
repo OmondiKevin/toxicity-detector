@@ -20,6 +20,26 @@ build/
 dist/
 *.egg
 
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+*.cover
+*.coveragerc
+
 # Release and large artifacts
 /evaluation_results/
 /data/raw/**
+
+# Test artifacts
+.pytest_cache/
+.tox/
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Temporary files
+*.tmp
+*.log

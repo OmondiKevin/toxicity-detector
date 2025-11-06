@@ -162,6 +162,8 @@ make help
 | `test` | Run pytest tests |
 | `test-cov` | Run pytest tests with coverage report |
 | `lint` | Run flake8 linting |
+| `package-assets` | Create zip archive of models and processed data |
+| `update-release` | Update existing GitHub release with new assets |
 
 ## API Endpoints
 
@@ -174,23 +176,41 @@ make help
 
 ```
 toxicity-detector/
-├── data/
-│   ├── raw/                    # Original datasets
-│   └── processed/              # Train/val/test splits
-├── models/                     # Trained models (git-ignored)
-├── src/
+├── app/                        # Streamlit demo application
+│   └── streamlit_app_multilabel.py
+├── src/                        # Core source code
 │   ├── api.py                  # FastAPI endpoints
 │   ├── model_lstm.py           # LSTM architecture
 │   ├── model_bert.py           # BERT architecture
 │   ├── train_lstm.py           # LSTM training script
 │   ├── train_bert.py           # BERT training script
-│   ├── evaluate_multilabel.py  # Evaluation & metrics
-│   └── preprocess.py           # Text cleaning utilities
-├── app/
-│   └── streamlit_app_multilabel.py  # Streamlit demo
+│   ├── evaluate_multilabel.py # Evaluation & metrics
+│   ├── preprocess.py           # Text cleaning utilities
+│   ├── dataset_utils.py        # Dataset utilities
+│   ├── prepare_merged.py       # Data preparation
+│   └── split_multilabel.py     # Data splitting
+├── tests/                      # Test suite
+│   ├── test_api.py
+│   ├── test_imports.py
+│   └── test_models.py
+├── data/
+│   ├── raw/                    # Original datasets (git-ignored)
+│   └── processed/              # Train/val/test splits
+├── models/                     # Trained models (git-ignored)
+├── tools/                      # Release packaging tools
+│   └── pack_release.py        # Single-ZIP release packager
+├── scripts/                    # Utility scripts
+│   └── release_update.sh       # Release update script
+├── .github/workflows/          # GitHub Actions workflows
+│   ├── release-single-zip.yml  # Automated release workflow
+│   └── update_existing_release.yml
 ├── pyproject.toml              # Modern Python packaging config
 ├── Makefile                    # Build automation
-└── requirements.txt            # Dependencies (for pip install -r)
+├── requirements.txt            # Dependencies
+├── README.md                   # This file
+├── RUN_INSTRUCTIONS.md         # Quick start guide
+├── REVIEWER_GUIDE.md           # Reviewer instructions
+└── RELEASE_UPDATE_RUNBOOK.md   # Release management guide
 ```
 
 ## Model Artifacts
@@ -199,6 +219,25 @@ Trained model files are **not stored in Git** due to their size (100MB+). To use
 1. Train models locally: `make train-lstm` and/or `make train-bert`
 2. Models will be saved to `models/` directory
 3. API and demo will load models from this directory
+
+## Release Assets
+
+Pre-trained models and processed datasets are available as release assets on GitHub. Each release includes a single downloadable ZIP file:
+
+- **`toxicity-detector-v<version>.zip`** - Complete package containing:
+  - Trained model files (`.pth` format for both LSTM and BERT)
+  - Model configuration files (`*config.json`)
+  - Processed datasets (train/val/test splits in CSV format)
+  - Source code (`app/`, `src/`)
+  - Documentation (README, RUN_INSTRUCTIONS, REVIEWER_GUIDE)
+  - Scripts and tools
+
+Check the [latest release](https://github.com/OmondiKevin/toxicity-detector/releases) to download the complete package.
+
+**Creating a new release:**
+- Push a tag (e.g., `v1.0.1`) to automatically trigger the release workflow
+- The workflow packages everything into a single ZIP and uploads it to GitHub
+- See [RELEASE_UPDATE_RUNBOOK.md](RELEASE_UPDATE_RUNBOOK.md) for details
 
 ## Hardware Requirements
 
@@ -267,10 +306,13 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guid
 
 **See [REVIEWER_GUIDE.md](REVIEWER_GUIDE.md)** for the simplest way to unzip, set up, and run the project without retraining.
 
-The packaged `toxicity-detector.zip` includes:
+**See [RUN_INSTRUCTIONS.md](RUN_INSTRUCTIONS.md)** for quick start instructions.
+
+The packaged `toxicity-detector-v<version>.zip` includes:
 - Trained models (BERT + LSTM) - ready to use
-- All datasets (raw + processed)
-- Evaluation results and visualizations
-- Complete source code and documentation
+- Processed datasets (train/val/test splits)
+- Complete source code (`app/`, `src/`)
+- Documentation (README, RUN_INSTRUCTIONS, REVIEWER_GUIDE)
+- Scripts and tools
 
 No training required - just unzip, install dependencies, and run!

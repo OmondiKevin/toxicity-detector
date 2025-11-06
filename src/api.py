@@ -27,7 +27,6 @@ def load_lstm_model():
     if LSTM_MODEL is None:
         from src.model_lstm import LSTMMultilabelClassifier
         from src import dataset_utils
-        from src.dataset_utils import Vocabulary
 
         # Compatibility layer: maps old module path for pickle compatibility
         sys.modules['dataset_utils'] = dataset_utils

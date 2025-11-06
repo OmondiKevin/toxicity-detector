@@ -1,0 +1,43 @@
+name: Update Existing Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Existing release tag to update (e.g., v1.0.0)"
+        required: true
+        type: string
+      files_glob:
+        description: "Glob(s) of files to upload (e.g., 'models/*.pth data/processed/*.csv toxicity-detector.zip')"
+        required: true
+        type: string
+      release_body:
+        description: "Optional new/extra release notes (appended)"
+        required: false
+        type: string
+      overwrite:
+        description: "Overwrite assets if they already exist?"
+        required: true
+        default: "true"
+        type: choice
+        options: ["true","false"]
+
+jobs:
+  update-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Upload/replace assets on existing release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ github.event.inputs.files_glob }}
+          tag: ${{ github.event.inputs.release_tag }}
+          overwrite: ${{ github.event.inputs.overwrite }}
+          body: ${{ github.event.inputs.release_body }}
+          file_glob: true
+          prerelease: false
+          draft: false
+

@@ -10,7 +10,6 @@ from src.model_lstm import LSTMMultilabelClassifier
 from src.model_bert import BERTMultilabelClassifier
 from src.preprocess import clean_text_advanced
 from src import dataset_utils
-from src.dataset_utils import Vocabulary
 from transformers import DistilBertTokenizer
 
 # Compatibility layer: maps old module path for pickle compatibility
