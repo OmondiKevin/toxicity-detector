@@ -12,11 +12,8 @@ RAW_HATE_PATH = "data/raw/hate_offensive_speech_detection.csv"
 OUT_DIR = "data/processed"
 OUT_FILE = f"{OUT_DIR}/merged_multilabel.csv"
 
-# My reasoning for the label mapping:
-# Hate speech targets specific groups (severe) - maps to severe_toxic + identity_hate
-# Offensive language is typically profanity - maps to obscene
-# This is a heuristic approach - real annotations would significantly improve performance
-# Label mapping based on toxicity severity
+# Heuristic mapping: hate speech -> severe_toxic + identity_hate; offensive -> obscene
+# Real annotations would improve performance significantly
 LABEL_MAPPING = {
     1: {  # Hate speech
         "toxic": 1,
@@ -64,33 +61,26 @@ def run(lemmatize: bool = True):
     df = pd.read_csv(RAW_HATE_PATH)
     print(f"Loaded {len(df):,} samples")
 
-    # Clean text
     print(f"\nCleaning text (URLs, mentions, hashtags, emojis, punctuation, lemmatization={lemmatize})...")
     df['text'] = df['tweet'].astype(str).apply(lambda x: clean_text_advanced(x, lemmatize=lemmatize))
 
-    # Remove empty texts
     original_len = len(df)
     df = df[df['text'].str.strip() != '']
     if len(df) < original_len:
         print(f"Removed {original_len - len(df)} empty texts")
 
-    # Map to multilabel structure
     print("\nMapping 3-class labels to 7-class multi-label structure...")
 
-    # Create label columns
     for col in ["toxic", "severe_toxic", "obscene", "threat", "insult", "identity_hate", "non_offensive"]:
         df[col] = df['label'].map(lambda x: LABEL_MAPPING[x][col])
 
-    # Select final columns
     output_columns = ["text", "toxic", "severe_toxic", "obscene", "threat", "insult", "identity_hate", "non_offensive"]
     df_out = df[output_columns].copy()
 
-    # Save
     print(f"\nSaving to {OUT_FILE}...")
     df_out.to_csv(OUT_FILE, index=False)
     print(f"Shape: {df_out.shape}")
 
-    # Statistics
     print("\nLabel distribution:")
     for col in ["toxic", "severe_toxic", "obscene", "threat", "insult", "identity_hate", "non_offensive"]:
         positive = df_out[col].sum()

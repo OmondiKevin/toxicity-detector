@@ -205,6 +205,7 @@ The BERT model requires ~2GB RAM for inference. Use LSTM endpoint if memory cons
 ## Documentation
 
 - **README.md** - Complete setup and usage guide
+- **CONTRIBUTING.md** - Code style and commenting guidelines for contributors
 - **INTERVIEW_REPORT.md** - Comprehensive technical report
   - Approach and methodology
   - Model architectures

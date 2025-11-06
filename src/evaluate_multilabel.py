@@ -19,7 +19,6 @@ from src.model_lstm import LSTMMultilabelClassifier
 from src.model_bert import BERTMultilabelClassifier
 from src.dataset_utils import create_lstm_dataloaders, create_bert_dataloaders
 
-# Paths
 TEST_PATH = "data/processed/test_multilabel.csv"
 LSTM_MODEL_PATH = "models/lstm_multilabel.pth"
 LSTM_VOCAB_PATH = "models/lstm_vocab.pth"
@@ -70,12 +69,10 @@ def compute_metrics(y_true, y_pred, y_probs):
     """
     metrics = {}
 
-    # Per-class metrics
     precision, recall, f1, support = precision_recall_fscore_support(
         y_true, y_pred, average=None, zero_division=0
     )
 
-    # Macro and micro averages
     precision_macro, recall_macro, f1_macro, _ = precision_recall_fscore_support(
         y_true, y_pred, average='macro', zero_division=0
     )
@@ -83,7 +80,6 @@ def compute_metrics(y_true, y_pred, y_probs):
         y_true, y_pred, average='micro', zero_division=0
     )
 
-    # ROC-AUC scores (requires probabilities)
     try:
         roc_auc_per_class = []
         for i in range(y_true.shape[1]):
@@ -127,7 +123,6 @@ def plot_confusion_matrices(y_true, y_pred, label_names, model_name, output_dir)
     """
     cm_multilabel = multilabel_confusion_matrix(y_true, y_pred)
 
-    # Create subplots
     n_labels = len(label_names)
     n_cols = 3
     n_rows = (n_labels + n_cols - 1) // n_cols
@@ -144,7 +139,6 @@ def plot_confusion_matrices(y_true, y_pred, label_names, model_name, output_dir)
         ax.set_ylabel('True Label')
         ax.set_xlabel('Predicted Label')
 
-    # Hide extra subplots
     for idx in range(n_labels, len(axes)):
         axes[idx].axis('off')
 
@@ -158,7 +152,6 @@ def plot_metrics_comparison(metrics_lstm, metrics_bert, label_names, output_dir)
     """
     Plot comparison of metrics between LSTM and BERT.
     """
-    # Prepare data
     metrics_to_plot = ['precision', 'recall', 'f1', 'roc_auc']
 
     fig, axes = plt.subplots(2, 2, figsize=(16, 12))
@@ -201,7 +194,6 @@ def generate_report(metrics_lstm, metrics_bert, label_names, output_dir):
     report_lines.append("=" * 80)
     report_lines.append("")
 
-    # LSTM Results
     report_lines.append("LSTM MODEL RESULTS")
     report_lines.append("-" * 80)
     report_lines.append(f"{'Label':<20} {'Precision':>10} {'Recall':>10} {'F1-Score':>10} {'ROC-AUC':>10} {'Support':>10}")
@@ -271,7 +263,6 @@ def generate_report(metrics_lstm, metrics_bert, label_names, output_dir):
 
     report_lines.append("=" * 80)
 
-    # Write to file
     report_text = "\n".join(report_lines)
     with open(f"{output_dir}/evaluation_report.txt", 'w') as f:
         f.write(report_text)
@@ -292,11 +283,9 @@ def run_evaluation():
 
     print("\nEvaluating LSTM model...")
 
-    # Load LSTM config
     with open(LSTM_CONFIG_PATH, 'r') as f:
         lstm_config = json.load(f)
 
-    # Load vocabulary and create dataloader
     vocab = torch.load(LSTM_VOCAB_PATH, weights_only=False)
     _, _, lstm_test_loader, _ = create_lstm_dataloaders(
         "data/processed/train_multilabel.csv",
@@ -307,7 +296,6 @@ def run_evaluation():
         batch_size=lstm_config['batch_size']
     )
 
-    # Load LSTM model
     lstm_model = LSTMMultilabelClassifier(
         vocab_size=len(vocab),
         embedding_dim=lstm_config['embedding_dim'],
@@ -325,11 +313,9 @@ def run_evaluation():
 
     print("\nEvaluating BERT model...")
 
-    # Load BERT config
     with open(BERT_CONFIG_PATH, 'r') as f:
         bert_config = json.load(f)
 
-    # Create dataloader
     _, _, bert_test_loader, tokenizer = create_bert_dataloaders(
         "data/processed/train_multilabel.csv",
         "data/processed/val_multilabel.csv",
@@ -339,7 +325,6 @@ def run_evaluation():
         batch_size=bert_config['batch_size']
     )
 
-    # Load BERT model
     bert_model = BERTMultilabelClassifier(
         num_labels=7,
         dropout=bert_config['dropout'],
@@ -364,7 +349,6 @@ def run_evaluation():
     print("\nGenerating report...")
     report = generate_report(metrics_lstm, metrics_bert, LABEL_NAMES, OUTPUT_DIR)
 
-    # Save metrics as JSON
     def safe_float(value):
         """Convert to float, replacing NaN with None for valid JSON."""
         val = float(value)

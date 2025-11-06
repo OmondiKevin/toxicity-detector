@@ -55,14 +55,12 @@ def clean_text_advanced(t: str, lemmatize: bool = False) -> str:
     Returns:
         Cleaned text
     """
-    # Apply basic cleaning
     t = clean_text(t)
 
-    # Apply lemmatization if requested
     if lemmatize and NLTK_AVAILABLE and LEMMATIZER:
         words = t.split()
-        words = [LEMMATIZER.lemmatize(word, pos='v') for word in words]  # Lemmatize as verbs
-        words = [LEMMATIZER.lemmatize(word, pos='n') for word in words]  # Then as nouns
+        words = [LEMMATIZER.lemmatize(word, pos='v') for word in words]
+        words = [LEMMATIZER.lemmatize(word, pos='n') for word in words]
         t = ' '.join(words)
     elif lemmatize and not NLTK_AVAILABLE:
         print("Warning: NLTK not available, skipping lemmatization")

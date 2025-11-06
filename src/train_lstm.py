@@ -14,7 +14,6 @@ from tqdm import tqdm
 from src.model_lstm import LSTMMultilabelClassifier
 from src.dataset_utils import create_lstm_dataloaders
 
-# Paths
 TRAIN_PATH = "data/processed/train_multilabel.csv"
 VAL_PATH = "data/processed/val_multilabel.csv"
 TEST_PATH = "data/processed/test_multilabel.csv"
@@ -23,7 +22,6 @@ MODEL_PATH = os.path.join(MODEL_DIR, "lstm_multilabel.pth")
 VOCAB_PATH = os.path.join(MODEL_DIR, "lstm_vocab.pth")
 CONFIG_PATH = os.path.join(MODEL_DIR, "lstm_config.json")
 
-# Hyperparameters
 HYPERPARAMS = {
     "max_vocab_size": 20000,
     "embedding_dim": 200,
@@ -47,11 +45,9 @@ def train_epoch(model, dataloader, criterion, optimizer, device):
         input_ids = batch['input_ids'].to(device)
         labels = batch['labels'].to(device)
 
-        # Forward pass
         outputs = model(input_ids)
         loss = criterion(outputs, labels)
 
-        # Backward pass
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
@@ -73,13 +69,11 @@ def evaluate(model, dataloader, criterion, device):
             input_ids = batch['input_ids'].to(device)
             labels = batch['labels'].to(device)
 
-            # Forward pass
             outputs = model(input_ids)
             loss = criterion(outputs, labels)
 
             total_loss += loss.item()
 
-            # Store predictions and labels
             all_preds.append(outputs.cpu().numpy())
             all_labels.append(labels.cpu().numpy())
 
@@ -138,24 +132,18 @@ def run_training():
         print(f"\nEpoch {epoch + 1}/{HYPERPARAMS['num_epochs']}")
         print("-" * 80)
 
-        # Train
         train_loss = train_epoch(model, train_loader, criterion, optimizer, device)
-
-        # Validate
         val_loss, _, _ = evaluate(model, val_loader, criterion, device)
 
-        # Learning rate scheduling
         scheduler.step(val_loss)
 
         print(f"Train Loss: {train_loss:.4f}")
         print(f"Val Loss: {val_loss:.4f}")
 
-        # Early stopping
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             patience_counter = 0
 
-            # Save best model
             print("New best model! Saving...")
             torch.save({
                 'epoch': epoch,
@@ -165,10 +153,8 @@ def run_training():
                 'hyperparams': HYPERPARAMS
             }, MODEL_PATH)
 
-            # Save vocabulary
             torch.save(vocab, VOCAB_PATH)
 
-            # Save config
             with open(CONFIG_PATH, 'w') as f:
                 json.dump(HYPERPARAMS, f, indent=2)
 
@@ -188,7 +174,6 @@ def run_training():
     test_loss, test_preds, test_labels = evaluate(model, test_loader, criterion, device)
     print(f"Test Loss: {test_loss:.4f}")
 
-    # Save test predictions
     np.save(os.path.join(MODEL_DIR, "lstm_test_preds.npy"), test_preds)
     np.save(os.path.join(MODEL_DIR, "lstm_test_labels.npy"), test_labels)
 

@@ -255,6 +255,14 @@ Reduce batch size in `src/train_lstm.py` or `src/train_bert.py`.
 
 ---
 
+## Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on:
+- Code style and commenting standards
+- How to write meaningful comments (explain **why**, not **what**)
+- Formatting and linting requirements
+- Testing guidelines
+
 ## For Reviewers
 
 **See [REVIEWER_GUIDE.md](REVIEWER_GUIDE.md)** for the simplest way to unzip, set up, and run the project without retraining.

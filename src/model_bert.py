@@ -25,20 +25,13 @@ class BERTMultilabelClassifier(nn.Module):
     ):
         super(BERTMultilabelClassifier, self).__init__()
 
-        # Load pre-trained DistilBERT
         self.bert = DistilBertModel.from_pretrained(pretrained_model)
-
-        # Get hidden size from BERT config
-        self.hidden_size = self.bert.config.hidden_size  # 768 for DistilBERT
-
-        # Dropout
+        self.hidden_size = self.bert.config.hidden_size
         self.dropout = nn.Dropout(dropout)
 
-        # Classification head
         self.fc1 = nn.Linear(self.hidden_size, 256)
         self.fc2 = nn.Linear(256, num_labels)
 
-        # Activations
         self.relu = nn.ReLU()
         self.sigmoid = nn.Sigmoid()
 
@@ -53,24 +46,19 @@ class BERTMultilabelClassifier(nn.Module):
         Returns:
             probs: (batch_size, num_labels) - sigmoid probabilities
         """
-        # BERT encoding
         outputs = self.bert(
             input_ids=input_ids,
             attention_mask=attention_mask
         )
 
-        # Use [CLS] token representation
-        pooled_output = outputs.last_hidden_state[:, 0, :]  # (batch_size, hidden_size)
+        pooled_output = outputs.last_hidden_state[:, 0, :]
 
-        # Dropout
         pooled_output = self.dropout(pooled_output)
 
-        # Classification head
         x = self.relu(self.fc1(pooled_output))
         x = self.dropout(x)
         logits = self.fc2(x)
 
-        # Sigmoid for multi-label
         probs = self.sigmoid(logits)
 
         return probs

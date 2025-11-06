@@ -35,10 +35,8 @@ class LSTMMultilabelClassifier(nn.Module):
         self.num_layers = num_layers
         self.num_directions = 2 if bidirectional else 1
 
-        # Embedding layer
         self.embedding = nn.Embedding(vocab_size, embedding_dim, padding_idx=0)
 
-        # LSTM layer
         self.lstm = nn.LSTM(
             embedding_dim,
             hidden_dim,
@@ -48,19 +46,14 @@ class LSTMMultilabelClassifier(nn.Module):
             dropout=dropout if num_layers > 1 else 0
         )
 
-        # Attention layer
         self.attention = nn.Linear(hidden_dim * self.num_directions, 1)
-
-        # Dropout
         self.dropout = nn.Dropout(dropout)
 
-        # Fully connected layers
         fc_input_dim = hidden_dim * self.num_directions
         self.fc1 = nn.Linear(fc_input_dim, 128)
         self.fc2 = nn.Linear(128, 64)
         self.fc_out = nn.Linear(64, num_labels)
 
-        # Activation
         self.relu = nn.ReLU()
         self.sigmoid = nn.Sigmoid()
 
@@ -74,17 +67,15 @@ class LSTMMultilabelClassifier(nn.Module):
         Returns:
             context_vector: (batch_size, hidden_dim * num_directions)
         """
-        # Calculate attention scores
         attention_weights = torch.softmax(
             self.attention(lstm_output).squeeze(-1),
             dim=1
-        )  # (batch_size, seq_len)
+        )
 
-        # Apply attention weights
         context_vector = torch.sum(
             attention_weights.unsqueeze(-1) * lstm_output,
             dim=1
-        )  # (batch_size, hidden_dim * num_directions)
+        )
 
         return context_vector
 
@@ -98,25 +89,20 @@ class LSTMMultilabelClassifier(nn.Module):
         Returns:
             logits: (batch_size, num_labels) - sigmoid probabilities
         """
-        # Embedding
-        embedded = self.embedding(input_ids)  # (batch_size, seq_len, embedding_dim)
+        embedded = self.embedding(input_ids)
         embedded = self.dropout(embedded)
 
-        # LSTM
-        lstm_out, (hidden, cell) = self.lstm(embedded)  # (batch_size, seq_len, hidden_dim * num_directions)
+        lstm_out, (hidden, cell) = self.lstm(embedded)
 
-        # Attention
-        context = self.attention_layer(lstm_out)  # (batch_size, hidden_dim * num_directions)
+        context = self.attention_layer(lstm_out)
         context = self.dropout(context)
 
-        # Fully connected layers
         x = self.relu(self.fc1(context))
         x = self.dropout(x)
         x = self.relu(self.fc2(x))
         x = self.dropout(x)
         logits = self.fc_out(x)
 
-        # Sigmoid for multi-label
         probs = self.sigmoid(logits)
 
         return probs

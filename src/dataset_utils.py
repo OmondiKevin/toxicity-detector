@@ -24,13 +24,11 @@ class Vocabulary:
         """Build vocabulary from texts."""
         word_counts = Counter()
         for text in texts:
-            # Handle potential non-string values
             if isinstance(text, str):
                 words = text.split()
                 word_counts.update(words)
 
-        # Keep most common words
-        most_common = word_counts.most_common(self.max_vocab_size - 2)  # -2 for PAD and UNK
+        most_common = word_counts.most_common(self.max_vocab_size - 2)
 
         for idx, (word, count) in enumerate(most_common, start=2):
             self.word2idx[word] = idx
@@ -41,16 +39,14 @@ class Vocabulary:
 
     def encode(self, text, max_length=128):
         """Encode text to indices."""
-        # Handle potential non-string values
         if not isinstance(text, str):
             text = str(text) if text is not None else ""
 
         words = text.split()[:max_length]
-        indices = [self.word2idx.get(word, 1) for word in words]  # 1 is <UNK>
+        indices = [self.word2idx.get(word, 1) for word in words]
 
-        # Pad to max_length
         if len(indices) < max_length:
-            indices += [0] * (max_length - len(indices))  # 0 is <PAD>
+            indices += [0] * (max_length - len(indices))
 
         return indices
 
@@ -74,7 +70,6 @@ class LSTMDataset(Dataset):
         text = self.texts[idx]
         label = self.labels[idx]
 
-        # Encode text
         input_ids = self.vocab.encode(text, self.max_length)
 
         return {
@@ -99,11 +94,9 @@ class BERTDataset(Dataset):
         text = self.texts[idx]
         label = self.labels[idx]
 
-        # Handle potential non-string values
         if not isinstance(text, str):
             text = str(text) if text is not None else ""
 
-        # Tokenize with BERT tokenizer
         encoding = self.tokenizer(
             text,
             add_special_tokens=True,
@@ -158,22 +151,18 @@ def create_lstm_dataloaders(
     Returns:
         train_loader, val_loader, test_loader, vocab
     """
-    # Load data
     train_texts, train_labels = load_data(train_path)
     val_texts, val_labels = load_data(val_path)
     test_texts, test_labels = load_data(test_path)
 
-    # Build vocabulary from training data
     if vocab is None:
         vocab = Vocabulary(max_vocab_size=max_vocab_size)
         vocab.build_vocab(train_texts)
 
-    # Create datasets
     train_dataset = LSTMDataset(train_texts, train_labels, vocab, max_length)
     val_dataset = LSTMDataset(val_texts, val_labels, vocab, max_length)
     test_dataset = LSTMDataset(test_texts, test_labels, vocab, max_length)
 
-    # Create dataloaders
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
@@ -203,20 +192,16 @@ def create_bert_dataloaders(
     Returns:
         train_loader, val_loader, test_loader, tokenizer
     """
-    # Load tokenizer
     tokenizer = DistilBertTokenizer.from_pretrained(model_name)
 
-    # Load data
     train_texts, train_labels = load_data(train_path)
     val_texts, val_labels = load_data(val_path)
     test_texts, test_labels = load_data(test_path)
 
-    # Create datasets
     train_dataset = BERTDataset(train_texts, train_labels, tokenizer, max_length)
     val_dataset = BERTDataset(val_texts, val_labels, tokenizer, max_length)
     test_dataset = BERTDataset(test_texts, test_labels, tokenizer, max_length)
 
-    # Create dataloaders
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)

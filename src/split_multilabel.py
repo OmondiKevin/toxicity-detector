@@ -17,8 +17,6 @@ def create_stratify_column(df, label_cols):
     Create a stratification column based on label combinations.
     For multi-label, we use the most dominant label for stratification.
     """
-    # Use the most frequent label combination or primary label
-    # For simplicity, we'll stratify on 'non_offensive' as it's the most balanced
     return df['non_offensive']
 
 
@@ -35,17 +33,14 @@ def run(test_size=0.20, val_size=0.125, seed=RANDOM_SEED):
     print("MULTILABEL DATASET SPLITTING")
     print("=" * 80)
 
-    # Load merged dataset
     print(f"\n1. Loading {INPUT_FILE}...")
     df = pd.read_csv(INPUT_FILE)
     print(f"   Total samples: {len(df):,}")
     print(f"   Columns: {list(df.columns)}")
 
-    # Create stratification column
     print("\n2. Creating stratified split...")
     stratify_col = create_stratify_column(df, LABEL_COLS)
 
-    # First split: train+val vs test
     train_val_df, test_df = train_test_split(
         df,
         test_size=test_size,
@@ -56,7 +51,6 @@ def run(test_size=0.20, val_size=0.125, seed=RANDOM_SEED):
     print(f"   Train+Val: {len(train_val_df):,} samples")
     print(f"   Test: {len(test_df):,} samples")
 
-    # Second split: train vs val
     stratify_col_train = create_stratify_column(train_val_df, LABEL_COLS)
     train_df, val_df = train_test_split(
         train_val_df,
@@ -68,7 +62,6 @@ def run(test_size=0.20, val_size=0.125, seed=RANDOM_SEED):
     print(f"   Train: {len(train_df):,} samples")
     print(f"   Val: {len(val_df):,} samples")
 
-    # Save splits
     print("\n3. Saving splits...")
     train_path = f"{OUT_DIR}/train_multilabel.csv"
     val_path = f"{OUT_DIR}/val_multilabel.csv"
@@ -82,7 +75,6 @@ def run(test_size=0.20, val_size=0.125, seed=RANDOM_SEED):
     print(f"   Saved: {val_path}")
     print(f"   Saved: {test_path}")
 
-    # Show label distribution for each split
     print("\n4. Label distribution across splits:")
     for split_name, split_df in [("Train", train_df), ("Val", val_df), ("Test", test_df)]:
         print(f"\n   {split_name} ({len(split_df):,} samples):")

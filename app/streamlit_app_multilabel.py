@@ -5,10 +5,16 @@ Supports LSTM and BERT models with content moderation actions.
 import streamlit as st
 import torch
 import json
+import sys
 from src.model_lstm import LSTMMultilabelClassifier
 from src.model_bert import BERTMultilabelClassifier
 from src.preprocess import clean_text_advanced
+from src import dataset_utils
+from src.dataset_utils import Vocabulary
 from transformers import DistilBertTokenizer
+
+# Compatibility layer: maps old module path for pickle compatibility
+sys.modules['dataset_utils'] = dataset_utils
 
 st.set_page_config(
     page_title="Toxicity Detector Pro",
@@ -118,14 +124,11 @@ def predict_bert(text, model, tokenizer):
     return {label: float(prob) for label, prob in zip(LABEL_NAMES, probs)}
 
 
-# ====== UI ======
 st.title("Toxicity Detector Pro")
 st.markdown("**Multilabel content moderation** using deep learning (LSTM & BERT)")
 
-# Tabs
 tab1, tab2 = st.tabs(["LSTM Model", "BERT Model"])
 
-# ====== TAB 1: LSTM ======
 with tab1:
     st.header("BiLSTM with Attention")
     st.caption("Fast inference with custom embeddings")
@@ -148,7 +151,6 @@ with tab1:
                     probs = predict_lstm(text_lstm, lstm_model, lstm_vocab)
                     action, reason, action_type = get_moderation_action(probs)
 
-                    # Show action
                     if action_type == "danger":
                         st.error(f"**{action}**: {reason}")
                     elif action_type == "warning":
@@ -156,7 +158,6 @@ with tab1:
                     else:
                         st.success(f"**{action}**: {reason}")
 
-                    # Show probabilities
                     st.subheader("Toxicity Probabilities")
                     cols = st.columns(4)
                     for idx, (label, prob) in enumerate(probs.items()):
@@ -180,7 +181,6 @@ with tab1:
     except Exception as e:
         st.error(f"Could not load LSTM model: {e}")
 
-# ====== TAB 2: BERT ======
 with tab2:
     st.header("DistilBERT Fine-tuned")
     st.caption("State-of-the-art transformer model")
@@ -203,7 +203,6 @@ with tab2:
                     probs = predict_bert(text_bert, bert_model, bert_tokenizer)
                     action, reason, action_type = get_moderation_action(probs)
 
-                    # Show action
                     if action_type == "danger":
                         st.error(f"**{action}**: {reason}")
                     elif action_type == "warning":
@@ -211,7 +210,6 @@ with tab2:
                     else:
                         st.success(f"**{action}**: {reason}")
 
-                    # Show probabilities
                     st.subheader("Toxicity Probabilities")
                     cols = st.columns(4)
                     for idx, (label, prob) in enumerate(probs.items()):
@@ -235,6 +233,5 @@ with tab2:
     except Exception as e:
         st.error(f"Could not load BERT model: {e}")
 
-# ====== Footer ======
 st.divider()
 st.caption("Built for the Toxicity Detection Interview Task | Models: LSTM (4.8M params) and BERT (66M+ params)")

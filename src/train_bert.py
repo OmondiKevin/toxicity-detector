@@ -15,7 +15,6 @@ from tqdm import tqdm
 from src.model_bert import BERTMultilabelClassifier
 from src.dataset_utils import create_bert_dataloaders
 
-# Paths
 TRAIN_PATH = "data/processed/train_multilabel.csv"
 VAL_PATH = "data/processed/val_multilabel.csv"
 TEST_PATH = "data/processed/test_multilabel.csv"
@@ -23,7 +22,6 @@ MODEL_DIR = "models"
 MODEL_PATH = os.path.join(MODEL_DIR, "bert_multilabel.pth")
 CONFIG_PATH = os.path.join(MODEL_DIR, "bert_config.json")
 
-# Hyperparameters
 HYPERPARAMS = {
     "model_name": "distilbert-base-uncased",
     "dropout": 0.3,
@@ -46,15 +44,12 @@ def train_epoch(model, dataloader, criterion, optimizer, device):
         attention_mask = batch['attention_mask'].to(device)
         labels = batch['labels'].to(device)
 
-        # Forward pass
         outputs = model(input_ids, attention_mask)
         loss = criterion(outputs, labels)
 
-        # Backward pass
         optimizer.zero_grad()
         loss.backward()
 
-        # Gradient clipping
         torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
 
         optimizer.step()
@@ -77,13 +72,11 @@ def evaluate(model, dataloader, criterion, device):
             attention_mask = batch['attention_mask'].to(device)
             labels = batch['labels'].to(device)
 
-            # Forward pass
             outputs = model(input_ids, attention_mask)
             loss = criterion(outputs, labels)
 
             total_loss += loss.item()
 
-            # Store predictions and labels
             all_preds.append(outputs.cpu().numpy())
             all_labels.append(labels.cpu().numpy())
 
@@ -128,7 +121,6 @@ def run_training():
 
     criterion = nn.BCELoss()
 
-    # Different learning rates for encoder vs head
     optimizer = optim.AdamW([
         {'params': model.bert.parameters(), 'lr': HYPERPARAMS["learning_rate"]},
         {'params': model.fc1.parameters(), 'lr': HYPERPARAMS["learning_rate"] * 10},
@@ -145,24 +137,18 @@ def run_training():
         print(f"\nEpoch {epoch + 1}/{HYPERPARAMS['num_epochs']}")
         print("-" * 80)
 
-        # Train
         train_loss = train_epoch(model, train_loader, criterion, optimizer, device)
-
-        # Validate
         val_loss, _, _ = evaluate(model, val_loader, criterion, device)
 
-        # Learning rate scheduling
         scheduler.step(val_loss)
 
         print(f"Train Loss: {train_loss:.4f}")
         print(f"Val Loss: {val_loss:.4f}")
 
-        # Early stopping
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             patience_counter = 0
 
-            # Save best model
             print("New best model! Saving...")
             torch.save({
                 'epoch': epoch,
@@ -172,7 +158,6 @@ def run_training():
                 'hyperparams': HYPERPARAMS
             }, MODEL_PATH)
 
-            # Save config
             with open(CONFIG_PATH, 'w') as f:
                 json.dump(HYPERPARAMS, f, indent=2)
 
@@ -192,7 +177,6 @@ def run_training():
     test_loss, test_preds, test_labels = evaluate(model, test_loader, criterion, device)
     print(f"Test Loss: {test_loss:.4f}")
 
-    # Save test predictions
     np.save(os.path.join(MODEL_DIR, "bert_test_preds.npy"), test_preds)
     np.save(os.path.join(MODEL_DIR, "bert_test_labels.npy"), test_labels)
 

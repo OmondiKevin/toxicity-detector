@@ -57,16 +57,13 @@ def test_lstm_model():
     print("=" * 80)
 
     try:
-        # Load config
         with open("models/lstm_config.json", 'r') as f:
             config = json.load(f)
         print("LSTM config loaded")
 
-        # Load vocabulary
         vocab = torch.load("models/lstm_vocab.pth", weights_only=False)
         print(f"Vocabulary loaded: {len(vocab)} words")
 
-        # Load model
         model = LSTMMultilabelClassifier(
             vocab_size=len(vocab),
             embedding_dim=config['embedding_dim'],
@@ -111,16 +108,13 @@ def test_bert_model():
     print("=" * 80)
 
     try:
-        # Load config
         with open("models/bert_config.json", 'r') as f:
             config = json.load(f)
         print("BERT config loaded")
 
-        # Load tokenizer
         tokenizer = DistilBertTokenizer.from_pretrained(config['model_name'])
         print(f"Tokenizer loaded: {config['model_name']}")
 
-        # Load model
         model = BERTMultilabelClassifier(
             num_labels=7,
             dropout=config['dropout'],
@@ -242,7 +236,6 @@ def test_end_to_end():
         "This is the worst idea I've ever heard, you idiot!"
     ]
 
-    # Load LSTM
     with open("models/lstm_config.json", 'r') as f:
         config = json.load(f)
     vocab = torch.load("models/lstm_vocab.pth", weights_only=False)
@@ -297,22 +290,12 @@ def run_all_tests():
 
     results = {}
 
-    # Test 1: Data
     results['data'] = test_data_files()
-
-    # Test 2: LSTM
     results['lstm'], _, _ = test_lstm_model()
-
-    # Test 3: BERT
     results['bert'], _, _ = test_bert_model()
-
-    # Test 4: Moderation Logic
     results['moderation'] = test_moderation_logic()
-
-    # Test 5: End-to-end
     results['e2e'] = test_end_to_end()
 
-    # Summary
     print("\n" + "=" * 80)
     print("TEST SUMMARY")
     print("=" * 80)
