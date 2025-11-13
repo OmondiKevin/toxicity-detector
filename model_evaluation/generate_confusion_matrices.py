@@ -11,7 +11,6 @@ of confusion matrices for each class.
 from __future__ import annotations
 
 import math
-import os
 from pathlib import Path
 from typing import Dict, Tuple
 
@@ -19,10 +18,10 @@ import matplotlib
 
 matplotlib.use("Agg")  # Use a non-interactive backend for headless environments.
 
-import matplotlib.pyplot as plt
-import numpy as np
-import seaborn as sns
-from sklearn.metrics import multilabel_confusion_matrix
+import matplotlib.pyplot as plt  # noqa: E402
+import numpy as np  # noqa: E402
+import seaborn as sns  # noqa: E402
+from sklearn.metrics import multilabel_confusion_matrix  # noqa: E402
 
 
 LABEL_NAMES = [
@@ -143,5 +142,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-
